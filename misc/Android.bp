@@ -288,3 +288,19 @@ cc_binary {
     ],
     system_shared_libs: ["libc", "libdl"],
 }
+
+//##########################################################################
+// Build filefrag
+
+cc_binary {
+    name: "e4defrag",
+    host_supported: false,
+    defaults: ["e2fsprogs-defaults"],
+
+    srcs: ["e4defrag.c"],
+    shared_libs: [
+        "libext2fs",
+        "libext2_com_err",
+    ],
+    system_shared_libs: ["libc", "libdl"],
+}

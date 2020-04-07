@@ -187,17 +187,7 @@ static struct frag_statistic_ino	frag_rank[SHOW_FRAG_FILES];
  * We prefer posix_fadvise64 when available, as it allows 64bit offset on
  * 32bit systems
  */
-#if defined(HAVE_POSIX_FADVISE64)
 #define posix_fadvise	posix_fadvise64
-#elif defined(HAVE_FADVISE64)
-#define posix_fadvise	fadvise64
-#elif !defined(HAVE_POSIX_FADVISE)
-#error posix_fadvise not available!
-#endif
-
-#ifndef HAVE_FALLOCATE64
-#error fallocate64 not available!
-#endif /* ! HAVE_FALLOCATE64 */
 
 /*
  * get_mount_point() -	Get device's mount point.
@@ -426,12 +416,10 @@ static int defrag_fadvise(int fd, struct move_extent defrag_data,
 	offset = (loff_t)defrag_data.orig_start * block_size;
 	offset = (offset / pagesize) * pagesize;
 
-#ifdef HAVE_SYNC_FILE_RANGE
 	/* Sync file for fadvise process */
 	if (sync_file_range(fd, offset,
 		(loff_t)pagesize * page_num, sync_flag) < 0)
 		return -1;
-#endif
 
 	/* Try to release buffer cache which this process used,
 	 * then other process can use the released buffer
